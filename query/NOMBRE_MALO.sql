@@ -1,0 +1,1 @@
+SELECT archivo, nombre FROM sdp.sdp_modulos WHERE archivo <> nombre;

@@ -1,0 +1,1 @@
+SELECT CICS, COUNT(CICS) FROM sdp.mod_versiones GROUP BY cics;

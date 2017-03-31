@@ -1,0 +1,1 @@
+select m.*, b.verbo from sdp_modulos as m join mod_cics as b on m.idVersion = b.idVersion where b.verbo like 'ADDRESS%';

@@ -1,0 +1,1 @@
+SELECT count(*) FROM sdp.mod_versiones where cics = 1;

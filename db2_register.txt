@@ -1,0 +1,41 @@
+CURRENT APPLICATION ENCODING SCHEME
+CURRENT CLIENT_ACCTNG              
+CURRENT CLIENT_APPLNAME            
+CURRENT CLIENT_USERID              
+CURRENT CLIENT_WRKSTNNAME          
+CURRENT DATE                       
+CURRENT_DATE                       
+CURRENT DEBUG MODE                 
+CURRENT DECFLOAT ROUNDING MODE     
+CURRENT DEGREE                     
+CURRENT EXPLAIN MODE               
+CURRENT GET_ACCEL_ARCHIVE          
+LOCALE                             
+CURRENT LC_CTYPE                   
+CURRENT_LC_CTYPE                   
+TABLE FOR OPTIMIZATION             
+CURRENT MAINTAINED TYPES           
+CURRENT MEMBER                     
+CURRENT OPTIMIZATION HINT          
+CURRENT PACKAGE PATH               
+CURRENT PACKAGESET                 
+CURRENT PATH                       
+CURRENT_PATH                       
+CURRENT PRECISION                  
+CURRENT QUERY ACCELERATION         
+CURRENT REFRESH AGE                
+CURRENT ROUTINE VERSION            
+CURRENT RULES                      
+CURRENT SCHEMA                     
+CURRENT_SCHEMA                     
+CURRENT SERVER                     
+CURRENT SQLID                      
+CURRENT TIME                       
+CURRENT_TIME                       
+CURRENT TIMESTAMP                  
+CURRENT_TIMESTAMP                  
+CURRENT TIME ZONE                  
+SESSION TIME ZONE                  
+ENCRYPTION PASSWORD                
+SESSION_USER                       
+USER                               
