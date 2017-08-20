@@ -35,7 +35,7 @@
 --  2 - igual
 --  3 - Mayor o igual
 --  4 - Menor o igual
---  5 - Tipo
+--  5 - Comienza
 -- -------------------------------------------------------------------
 
 USE SDP;
@@ -46,12 +46,12 @@ USE SDP;
 
 DELETE FROM RUL_GROUPS;
 DELETE FROM RUL_ITEMS;
-DELETE FROM RUL_ISSUES;
+DELETE FROM RUL_RULES;
 DELETE FROM RUL_DESC;
 
 INSERT INTO RUL_GROUPS (idGroup, idParent, activo, idDesc, prefix)  VALUES (   1,  0, 1, 1, 'COM');
-INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, msg)             VALUES (   1, 'XX', 'XX', 'Raiz');
-INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, msg)             VALUES (   1, 'ES', 'es', 'Raiz');
+INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, label, msg)             VALUES (   1, 'XX', 'XX', 'Raiz', 'Raiz');
+INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, label, msg)             VALUES (   1, 'ES', 'es', 'Raiz', 'Raiz');
 
 -- -------------------------------------------------------------------
 -- Grupo: 2 - Codigo fuente
@@ -60,22 +60,51 @@ INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, msg)             VALUES (   1
 -- Se chequean directamente en el analisis
 -- -------------------------------------------------------------------
 
-INSERT INTO RUL_GROUPS (idGroup, idParent, activo, idDesc, prefix)  VALUES (   2,  1, 1, 2, 'SRC');
-INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, msg)             VALUES (   2, 'XX', 'XX', 'Codigo fuente');
-INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, msg)             VALUES (   2, 'ES', 'es', 'Codigo fuente');
+INSERT INTO RUL_GROUPS (idGroup, idParent, activo, idDesc, prefix)  VALUES (   2,  1, 1, 2, 'LEX');
+INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, label, msg)      VALUES (   2, 'XX', 'xx', 'Codigo escrito', 'Codigo escrito');
 
-INSERT INTO RUL_ITEMS  (idGroup, idItem, activo, keyNum, keyTxt, uid, tms) 
-            VALUES     (      2,      1,      1,      0, 'TAB', 'SYSTEM', CURRENT_TIMESTAMP);
-INSERT INTO RUL_ISSUES (idGroup, idItem,  idIssue, activo, prty, severity, tipo, comparador,  valor, uid,      tms) 
-                VALUES (      2,      1,        1,      1,    0,        2,    1,          0,    ' ', 'SYSTEM', CURRENT_TIMESTAMP);
-INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, msg) VALUES (  210101, 'XX', 'XX', 'No usar caracteres tabulacion');
-INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, msg) VALUES (  210101, 'ES', 'es', 'No usar caracteres tabulacion');
+INSERT INTO RUL_ITEMS  (idGroup, idItem, idDesc, activo,  clave, uid, tms) 
+            VALUES     (      2,      1,      0,      1,  'TAB', 'SYSTEM', CURRENT_TIMESTAMP);
+INSERT INTO RUL_RULES  (idGroup, idItem,  idRule,   idDesc, activo, priority, severity, tipo, comparador,  valor, idSample,   uid,      tms) 
+                VALUES (      2,      1,        1,   20101,      1,        0,        2,    1,          0,    ' ',        0,   'SYSTEM', CURRENT_TIMESTAMP);
+                
+INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, label, msg) VALUES (  20101, 'XX', 'xx', 'Tabuladores', 'No usar caracteres de tabulacion');
 
--- INSERT INTO RUL_ITEMS  (idGroup, idItem,  activo, keyNum, keyTxt, uid, tms) VALUES (  2,   202, 1, 0, ' ', 'SYSTEM', CURRENT_TIMESTAMP);
--- INSERT INTO RUL_ISSUES (idItem,  idIssue, activo, prty, severity, tipo, comparador,  valor, uid,      tms) 
---                 VALUES (  0202,   020201,      1,    0,        2,    1,          0,    ' ', 'SYSTEM', CURRENT_TIMESTAMP);
--- INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, msg) VALUES (  020201, 'XX', 'XX', 'No usar caracteres no imprimibles');
--- INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, msg) VALUES (  020201, 'ES', 'es', 'No usar caracteres no imprimibles');
+INSERT INTO RUL_ITEMS  (idGroup, idItem, idDesc, activo,  clave, uid, tms) 
+            VALUES     (      2,      2,      0,      1,  'HEX', 'SYSTEM', CURRENT_TIMESTAMP);
+INSERT INTO RUL_RULES  (idGroup, idItem,  idRule,   idDesc, activo, priority, severity, tipo, comparador,  valor, idSample,   uid,      tms) 
+            VALUES     (      2,      2,       1,   210201,      1,        0,        2,    1,          0,    ' ',        0,   'SYSTEM', CURRENT_TIMESTAMP);
+                
+INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, label, msg) VALUES (  210201, 'XX', 'xx', 'Caracteres no imprimibles', 'Usar la codificacion hexadecimal para los caracteres no imprimibles');
+
+
+-- -------------------------------------------------------------------
+-- Grupo: 21 - COMENTARIOS
+-- Padre:  2 - Codigo fuente
+-- -------------------------------------------------------------------
+
+INSERT INTO RUL_GROUPS (idGroup, idParent, activo, idDesc, prefix)  
+            VALUES     (     21,        2,      1,     21, 'CMT');
+INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, label, msg)             VALUES (  21, 'XX', 'xx', 'Comentarios', 'Comentarios');
+
+INSERT INTO RUL_ITEMS  (idGroup, idItem,  idDesc, activo,   clave, uid,      tms) 
+            VALUES     (     21,      1,       0,      1,   'CMT', 'SYSTEM', CURRENT_TIMESTAMP);
+INSERT INTO RUL_RULES  (idGroup, idItem,  idRule,     idDesc, activo, priority, severity, tipo, comparador,  valor, uid,      tms) 
+            VALUES     (     21,      1,       1,     210101,      1,        1,        3,    1,          5,    'D', 'SYSTEM', CURRENT_TIMESTAMP);
+INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, label, msg) VALUES (  210101, 'XX', 'xx', 'Comentarios', 'Usar solo caracter asterisco para comentarios');
+
+INSERT INTO RUL_RULES  (idGroup, idItem,  idRule,     idDesc, activo, priority, severity, tipo, comparador,  valor, uid,      tms) 
+            VALUES     (     21,      1,       2,     210102,      1,        2,        3,    1,          5,    '/', 'SYSTEM', CURRENT_TIMESTAMP);
+INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, label, msg) VALUES (  210102, 'XX', 'xx', 'Comentarios', 'Usar solo caracter asterisco para comentarios');
+
+INSERT INTO RUL_RULES  (idGroup, idItem,  idRule,     idDesc, activo, priority, severity, tipo, comparador,  valor, uid,      tms) 
+            VALUES     (     21,      1,       3,     210103,      0,        2,        3,    1,          5,    '/', 'SYSTEM', CURRENT_TIMESTAMP);
+INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, label, msg) VALUES (  210103, 'XX', 'xx', 'Comentarios', 'Usar solo caracter asterisco para comentarios');
+
+INSERT INTO RUL_RULES  (idGroup, idItem,  idRule,     idDesc, activo, priority, severity, tipo, propiedad, comparador,  valor, uid,      tms) 
+            VALUES     (     21,      1,       4,     210104,      1,        0,        3,    9,  'length',          2,    '1', 'SYSTEM', CURRENT_TIMESTAMP);
+INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, label, msg) VALUES (  210104, 'XX', 'xx', 'Comentarios', 'No usar caracteres de comentarios aislados');
+
 -- 
 -- INSERT INTO RUL_ITEMS  (idGroup, idItem,  activo, keyNum, keyTxt, uid, tms) VALUES (  2,   203, 1, 0, 'EJECT', 'SYSTEM', CURRENT_TIMESTAMP);
 -- INSERT INTO RUL_ISSUES (idItem,  idIssue, activo, prty, severity, tipo, comparador,  valor,        uid,      tms) 
@@ -95,28 +124,6 @@ INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, msg) VALUES (  210101, 'ES',
 -- INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, msg) VALUES (  020401, 'XX', 'XX', 'No se pueden usar directivas de compilacion en el codigo');
 -- INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, msg) VALUES (  020401, 'ES', 'es', 'No se pueden usar directivas de compilacion en el codigo');
 -- 
--- 
--- 
--- -- -------------------------------------------------------------------
--- -- Grupo: 21 - COMENTARIOS
--- -- Padre:  2 - Codigo fuente
--- -- -------------------------------------------------------------------
--- 
--- INSERT INTO RUL_GROUPS (idGroup, idParent, activo, idDesc, prefix)  VALUES (  21,  2, 1, 21, 'CMT');
--- INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, msg)             VALUES (  21, 'XX', 'XX', 'Comentarios');
--- INSERT INTO RUL_DESC   (idDesc, idLang, idDialect, msg)             VALUES (  21, 'ES', 'es', 'Comentarios');
--- 
--- INSERT INTO RUL_ITEMS  (idGroup, idItem,  activo, keyNum, keyTxt, uid, tms) VALUES ( 21,  2101, 1, 0, 'D', 'SYSTEM', CURRENT_TIMESTAMP);
--- INSERT INTO RUL_ISSUES (idItem,  idIssue, activo, prty, severity, tipo, comparador,  valor, uid,      tms) 
---                 VALUES (  2101,   210101,      1,    0,        1,    1,          0,    'D', 'SYSTEM', CURRENT_TIMESTAMP);
--- INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, msg) VALUES (  210101, 'XX', 'XX', 'No usar codigo de depuracion');
--- INSERT INTO RUL_DESC   (idDesc,  idLang, idDialect, msg) VALUES (  210101, 'ES', 'es', 'No usar codigo de depuracion');
--- 
--- INSERT INTO RUL_ITEMS  (idGroup, idItem,  activo, keyNum, keyTxt, uid, tms) VALUES ( 21,  2102, 1, 0, '/', 'SYSTEM', CURRENT_TIMESTAMP);
--- INSERT INTO RUL_ISSUES (idItem,  idIssue, activo, prty, severity, tipo, comparador,  valor, uid,      tms) 
---                 VALUES (  2102,   210201,      1,    0,        1,    1,          0,    '/', 'SYSTEM', CURRENT_TIMESTAMP);
--- INSERT INTO RUL_DESC   (cdgMsg, idLang, idDialect, msg) VALUES (  210201, 'XX', 'XX', 'Usar solo caracter asterisco para comentarios');
--- INSERT INTO RUL_DESC   (cdgMsg, idLang, idDialect, msg) VALUES (  210201, 'ES', 'es', 'Usar solo caracter asterisco para comentarios');
 -- 
 -- 
 -- -- -------------------------------------------------------------------

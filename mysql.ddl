@@ -37,6 +37,9 @@ CREATE TABLE CFG_CONFIGURACION  (
    ,minimo   VARCHAR   (32)
    ,maximo   VARCHAR   (32)
    ,tooltip  INTEGER        NOT NULL
+   ,uid      VARCHAR(32)    DEFAULT 'SYSTEM'
+   ,tms      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
+
 );
 
 ALTER TABLE CFG_CONFIGURACION ADD PRIMARY KEY ( clave );
@@ -149,32 +152,16 @@ ALTER TABLE SDP_FILES   ADD UNIQUE  KEY   ( archivo , tipo );
 -- Modulo fuente original comprimido
 -- -------------------------------------------------------------------
 
-DROP   TABLE IF EXISTS SDP_FUENTES CASCADE ;
-CREATE TABLE SDP_FUENTES (
+DROP   TABLE IF EXISTS SDP_SOURCES CASCADE ;
+CREATE TABLE SDP_SOURCES (
     idFile    BIGINT UNSIGNED  NOT NULL  -- Identificador de la version del modulo
-   ,source    BLOB             NOT NULL  -- Fuente en formato ZIP
+   ,source    MEDIUMBLOB       NOT NULL  -- Fuente en formato ZIP
 );
 
-ALTER TABLE SDP_FUENTES ADD PRIMARY KEY ( idFile );
-ALTER TABLE SDP_FUENTES ADD FOREIGN KEY ( idFile ) 
+ALTER TABLE SDP_SOURCES ADD PRIMARY KEY ( idFile );
+ALTER TABLE SDP_SOURCES ADD FOREIGN KEY ( idFile ) 
                            REFERENCES SDP_FILES ( idFile )
                            ON DELETE CASCADE ;
-
--- -------------------------------------------------------------------
--- Modulo fuente original comprimido de programas 
--- que han fallado en el analisis
--- Se analizaran para ver la construcion que ha fallado
--- -------------------------------------------------------------------
-
-DROP   TABLE IF EXISTS SDP_FUENTES_ERR CASCADE ;
-CREATE TABLE SDP_FUENTES_ERR (
-    tms       TIMESTAMP      NOT NULL  -- Timestamp de ejecución
-   ,nombre    VARCHAR  (32)  NOT NULL  -- Nombre del modulo 
-   ,uid       VARCHAR  (32)  NOT NULL  -- uid que lo ha compilado
-   ,source    MEDIUMBLOB     NOT NULL  -- Fuente en formato ZIP
-);
-
-ALTER TABLE SDP_FUENTES_ERR ADD PRIMARY KEY ( tms );
 
 -- ----------------------------------------------------------
 -- Definicion basica de un modulo
@@ -202,7 +189,7 @@ ALTER TABLE SDP_MODULOS ADD FOREIGN KEY(idAppl)
 
 -- ----------------------------------------------------------
 -- Dependencias manuales
--- Se cargan de manera manual par resolver dependencias que
+-- Se cargan de manera manual para resolver dependencias que
 -- no se pueden inferir en el analisis estatico
 -- ----------------------------------------------------------
 
@@ -255,7 +242,8 @@ CREATE TABLE MOD_VERSIONES (
     idModulo     BIGINT UNSIGNED  NOT NULL  -- Id del modulo
    ,idVersion    BIGINT UNSIGNED  NOT NULL  -- Id de la version 
    ,idFile       BIGINT UNSIGNED  NOT NULL  -- Id del archivo
-   ,linea        INTEGER          NOT NULL  -- Offset de inicio del modulo dentro del archivo
+   ,offsetBeg    INTEGER          NOT NULL  -- Offset de inicio del modulo dentro del archivo
+   ,offsetEnd    INTEGER          NOT NULL  -- Offset de fin del modulo dentro del archivo
    ,nombre       VARCHAR(32)      NOT NULL  -- Nombre del modulo 
    ,tipo         INTEGER          NOT NULL  -- Tipo de modulo     
    ,estado       INTEGER          NOT NULL  --  0 - Sin info /  1 - Completo /  2 - Parcial pero sin dudas
@@ -263,6 +251,7 @@ CREATE TABLE MOD_VERSIONES (
    ,missing      INTEGER          NOT NULL  -- Tiene copys no procesadas (0 - No / 1 - Missing / 2 - erroneas)
    ,arbol        INTEGER          NOT NULL  -- El arbol de llamadas esta completo (1 - Si, 0 - No)
    ,descripcion  VARCHAR(512)     NOT NULL  -- Posible comentario
+   ,autor        VARCHAR(64)      NOT NULL  -- Autor
    ,uid          VARCHAR(32)      NOT NULL  -- uid que crea o actualiza   
    ,tms          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
 );
@@ -488,20 +477,50 @@ DROP   TABLE IF EXISTS MOD_ISSUES ;
 CREATE TABLE MOD_ISSUES (
     idVersion    BIGINT UNSIGNED NOT NULL  -- Id de la verson del modulo
    ,idSeq        INTEGER         NOT NULL  -- Numero de secuencia 
-   ,idIssue      INTEGER         NOT NULL  -- Tipo de issue
+   ,idGroup      INTEGER         NOT NULL  -- Grupo
+   ,idItem       INTEGER         NOT NULL  -- Item
+   ,idRule       INTEGER         NOT NULL  -- Regla   
    ,severity     INTEGER         NOT NULL  -- Nivel de severidad
    ,begLine      INTEGER         NOT NULL  -- Inicio de linea
    ,begColumn    INTEGER         NOT NULL  -- Inicio de columna
    ,endLine      INTEGER         NOT NULL  -- Fin de linea
    ,endColumn    INTEGER         NOT NULL  -- Fin de columna
-   ,bloque       VARCHAR(64)     NOT NULL  -- Bloque donde se ha identificado
-   ,firma        VARCHAR(64)     NOT NULL  -- firma digital    
+   ,bloque       VARCHAR(64)     NOT NULL  -- Bloque donde se ha identificado / Parrafo
+   ,firma        VARCHAR(64)     NOT NULL  -- firma digital   
+   ,idException  BIGINT UNSIGNED NOT NULL  -- Id de la excepcion
 );
 
-ALTER TABLE MOD_ISSUES ADD PRIMARY KEY ( idVersion , idSeq , idIssue);
+ALTER TABLE MOD_ISSUES ADD PRIMARY KEY ( idVersion , idSeq);
 ALTER TABLE MOD_ISSUES ADD FOREIGN KEY ( idVersion ) 
                            REFERENCES MOD_VERSIONES ( idVersion )
                            ON DELETE CASCADE ;
+
+DROP   TABLE IF EXISTS MOD_ISSUES_EXCEP ;
+CREATE TABLE MOD_ISSUES_EXCEP (
+    idVersion    BIGINT UNSIGNED NOT NULL  -- Id de la verson del modulo
+   ,idException  BIGINT UNSIGNED NOT NULL  -- Id de la excepcion
+   ,idData       BIGINT UNSIGNED NOT NULL  -- Id de la descripcion de la excepcion
+   ,uid          VARCHAR(32)      NOT NULL  -- uid que crea o actualiza   
+   ,tms          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
+);
+
+ALTER TABLE MOD_ISSUES_EXCEP ADD PRIMARY KEY ( idVersion , idSeq);
+ALTER TABLE MOD_ISSUES_EXCEP ADD FOREIGN KEY ( idVersion ) 
+                                 REFERENCES MOD_VERSIONES ( idVersion )
+                                 ON DELETE CASCADE ;
+
+DROP   TABLE IF EXISTS MOD_ISSUES_EXCEP_DESC ;
+CREATE TABLE MOD_ISSUES_EXCEP_DESC (
+    idVersion    BIGINT UNSIGNED NOT NULL  -- Id de la verson del modulo
+   ,idException  BIGINT UNSIGNED NOT NULL  -- Id de la excepcion
+   ,idData       BIGINT UNSIGNED NOT NULL  -- Id de la descripcion de la excepcion
+   ,data         MEDIUMBLOB      NOT NULL  -- Datos de la excepcion
+);
+
+ALTER TABLE MOD_ISSUES_EXCEP_DESC ADD PRIMARY KEY ( idVersion , idException, idData);
+ALTER TABLE MOD_ISSUES_EXCEP_DESC ADD FOREIGN KEY ( idVersion , idException ) 
+                                  REFERENCES MOD_ISSUES_EXCEP ( idVersion , idException)
+                                  ON DELETE CASCADE ;
 
 -- ----------------------------------------------------------
 -- Sentencias SQL
@@ -1239,19 +1258,19 @@ ALTER TABLE CFG_CICS ADD PRIMARY KEY ( verbo );
 DROP TABLE IF EXISTS RUL_GROUPS ;
 CREATE TABLE RUL_GROUPS (
     idGroup      INTEGER          NOT NULL  -- Agrupacion de reglas
-   ,idparent     INTEGER          NOT NULL  -- Padre del grupo
-   ,activo       INTEGER          NOT NULL  -- Grupo ativo o inactivo (0/1)
-   ,idName       VARCHAR(64)      NOT NULL  -- Clave texto
+   ,idParent     INTEGER          NOT NULL  -- Padre del grupo (0 = raiz)
+   ,active       INTEGER          NOT NULL  -- Grupo ativo o inactivo (0/1)
+   ,idDesc       INTEGER          NOT NULL  -- Id de la descripcion
+   ,prefix       VARCHAR(5)       NOT NULL  -- Prefijo de los mensajes
 );
 ALTER TABLE RUL_GROUPS ADD PRIMARY KEY ( idGroup );
-ALTER TABLE RUL_GROUPS ADD UNIQUE  KEY ( idName  );
 
 DROP TABLE IF EXISTS RUL_ITEMS ;
 CREATE TABLE RUL_ITEMS (
     idGroup      INTEGER          NOT NULL  -- Agrupacion de reglas
    ,idItem       INTEGER          NOT NULL  -- Identificador del item
    ,activo       INTEGER          NOT NULL  -- 0 - No 1 - Activo
-   ,keyNum       INTEGER          NOT NULL  -- Clave numerica
+   ,keyNum       INTEGER                    -- Clave numerica
    ,keyTxt       VARCHAR(64)                -- Clave texto
    ,uid          VARCHAR(32)      NOT NULL  -- Usuario que activa/desactiva
    ,tms          TIMESTAMP        NOT NULL  -- Fecha de modificacion
@@ -1264,7 +1283,8 @@ ALTER TABLE RUL_ITEMS ADD FOREIGN KEY ( idGroup )
 
 DROP TABLE IF EXISTS RUL_ISSUES ;
 CREATE TABLE RUL_ISSUES (
-    idItem       INTEGER          NOT NULL  -- Agrupacion de reglas
+    idGroup      INTEGER          NOT NULL  -- Agrupacion de reglas
+   ,idItem       INTEGER          NOT NULL  -- Agrupacion de reglas
    ,idIssue      INTEGER          NOT NULL  -- Identificador del Issue
    ,activo       INTEGER          NOT NULL  -- 0 - No 1 - Activo
    ,severity     INTEGER          NOT NULL  -- Nivel de severidad
@@ -1275,18 +1295,20 @@ CREATE TABLE RUL_ISSUES (
    ,tms          TIMESTAMP        NOT NULL  -- Fecha de modificacion
 );
 
-ALTER TABLE RUL_ISSUES ADD PRIMARY KEY ( idItem , idIssue );
+ALTER TABLE RUL_ISSUES ADD PRIMARY KEY ( idGroup, idItem , idIssue );
 
 DROP TABLE IF EXISTS RUL_DESC ;
 CREATE TABLE RUL_DESC (
-    cdgMsg       INTEGER          NOT NULL  -- Codigo de la descripcion
+    idGroup      INTEGER          NOT NULL  -- Agrupacion de reglas
+   ,idItem       INTEGER          NOT NULL  -- Agrupacion de reglas
+   ,idIssue      INTEGER          NOT NULL  -- Identificador del Issue
    ,idLang       CHAR(2)          NOT NULL  -- Codigo del idioma
    ,idDialect    CHAR(2)          NOT NULL  -- Codigo del dialecto
    ,msg          VARCHAR(255)     NOT NULL  -- Texto
 
 );
 
-ALTER TABLE RUL_DESC ADD PRIMARY KEY ( cdgMsg , idLang, idDialect );
+ALTER TABLE RUL_DESC ADD PRIMARY KEY ( idGroup, idItem, idIssue, idLang, idDialect );
 
 
 -- Tabla con las funciones de DB2

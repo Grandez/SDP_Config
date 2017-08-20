@@ -1,0 +1,12 @@
+<IVP>
+   <Module>SDPAnalyzer</Module>
+   <Root>P:\SDP\Cobol</Root>
+   
+   <Directories>
+      <Directory>
+          <Name>issues</name>
+          <desc>Verficando issues y rules de programacion  </desc>
+      </Directory>
+   </Directories>
+</IVP>
+

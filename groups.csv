@@ -1,0 +1,10 @@
+Grupo;Padre;prfx;desc
+1;0;COM;Raiz
+2;1;SRC;Codigo fuente
+3;1;PGM;Programa
+5;1;CDG;Codigo fuente
+51;5;COB;Codigo COBOL
+52;5;SQL;Codigo SQL
+53;5;CIC;Codigo CICS
+21;2;CMT;Comentarios
+22;2;CPY;COPYS
