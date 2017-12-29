@@ -1,12 +1,14 @@
 <IVP>
-   <Module>SDPAnalyzer</Module>
-   <Root>P:\SDP\Cobol</Root>
+   <module>
+      <name>SDPAnalyzer</name>
+      <root>P:\SDP\Cobol</root>
    
-   <Directories>
-      <Directory>
-          <Name>issues</name>
-          <desc>Verficando issues y rules de programacion  </desc>
-      </Directory>
-   </Directories>
+      <directories>
+         <directory>
+            <name>issues</name>
+            <desc>Verficando issues y rules de programacion  </desc>
+         </directory>
+      </directories>
+   </module>
 </IVP>
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:RULES xmlns:p="http://www.sdp.com/SDPRULES"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.sdp.com/SDPRULES http://www.sdp.com/SDPRULES.xsd">
+
+   <p:group name="LEX">
+      <parent>1</parent>
+      <id>2</id>
+      <prefix>LEX</prefix>
+      <active>false</active>
+      <description>
+         <id>200</id>
+         <value lang="xx" dialect="XX">Codigo escrito</value>
+      </description>
+   </p:group>
+
+</p:RULES>

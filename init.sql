@@ -69,73 +69,75 @@ INSERT INTO SDP_REL_APP_MOD ( idAppl , mask , fijo , peso , uid    ) VALUES ( 41
 INSERT INTO SDP_REL_APP_MOD ( idAppl , mask , fijo , peso , uid    ) VALUES (   4 , 'SDP*'  , 300 ,  1000 , 'SYSTEM');
 INSERT INTO SDP_REL_APP_MOD ( idAppl , mask , fijo , peso , uid    ) VALUES ( 415 , 'WRT*'  , 300 ,  1000 , 'SYSTEM');
 
-DELETE FROM CFG_CODIGOS;
+DELETE FROM CFG_CODES;
 
 -- Tipos de modulos (Grupo 1)
 
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 ,  0 , 'XX' , 'Unknow'            );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 10 , 'XX' , 'Area / Application');
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 11 , 'XX' , 'Area'              );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 12 , 'XX' , 'Application'       );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 20 , 'XX' , 'Program'           );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 21 , 'XX' , 'Main program'      );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 22 , 'XX' , 'Module'            );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 30 , 'XX' , 'Copy'              );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 31 , 'XX' , 'Working copy'      );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 32 , 'XX' , 'Code working'      );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 ,  0 , 'xx', 'XX' , 'Unknow'            );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 10 , 'xx', 'XX' , 'Area / Application');
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 11 , 'xx', 'XX' , 'Area'              );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 12 , 'xx', 'XX' , 'Application'       );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 20 , 'xx', 'XX' , 'Program'           );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 21 , 'xx', 'XX' , 'Main program'      );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 22 , 'xx', 'XX' , 'Module'            );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 30 , 'xx', 'XX' , 'Copy'              );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 31 , 'xx', 'XX' , 'Working copy'      );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 32 , 'xx', 'XX' , 'Code working'      );
 
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 ,  0 , 'ES' , 'No identificado'   );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 10 , 'ES' , 'Area / Aplicacion' );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 11 , 'ES' , 'Area'              );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 12 , 'ES' , 'Aplicacion'        );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 20 , 'ES' , 'Programa'          );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 21 , 'ES' , 'Programa principal');
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 22 , 'ES' , 'Rutina'            );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 30 , 'ES' , 'Copy'              );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 31 , 'ES' , 'Copy Working'      );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  1 , 32 , 'ES' , 'Copy Codigo'       );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 ,  0 , 'es', 'ES' , 'No identificado'   );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 10 , 'es', 'ES' , 'Area / Aplicacion' );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 11 , 'es', 'ES' , 'Area'              );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 12 , 'es', 'ES' , 'Aplicacion'        );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 20 , 'es', 'ES' , 'Programa'          );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 21 , 'es', 'ES' , 'Programa principal');
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 22 , 'es', 'ES' , 'Rutina'            );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 30 , 'es', 'ES' , 'Copy'              );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 31 , 'es', 'ES' , 'Copy Working'      );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  1 , 32 , 'es', 'ES' , 'Copy Codigo'       );
 
 -- Tipos de dependencias (Grupo 2)
 
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 ,  1 , 'XX' , 'General copy'      );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 ,  1 , 'xx', 'XX' , 'General copy'      );
 
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 10 , 'XX' , 'General copy'      );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 11 , 'XX' , 'File description'  );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 13 , 'XX' , 'Working copybook'  );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 14 , 'XX' , 'Linkage copybook'  );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 15 , 'XX' , 'Code copybook'     );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 10 , 'xx', 'XX' , 'General copy'      );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 11 , 'xx', 'XX' , 'File description'  );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 13 , 'xx', 'XX' , 'Working copybook'  );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 14 , 'xx', 'XX' , 'Linkage copybook'  );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 15 , 'xx', 'XX' , 'Code copybook'     );
 
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 20 , 'XX' , 'Module'            );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 21 , 'XX' , 'Static Module'     );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 22 , 'XX' , 'Dynamic Module'    );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 23 , 'XX' , 'Variable'          );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 20 , 'xx', 'XX' , 'Module'            );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 21 , 'xx', 'XX' , 'Static Module'     );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 22 , 'xx', 'XX' , 'Dynamic Module'    );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 23 , 'xx', 'XX' , 'Variable'          );
 
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 ,  1 , 'ES' , 'General copy'      );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 ,  1 , 'es', 'ES' , 'General copy'      );
 
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 10 , 'ES' , 'Copy General'      );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 11 , 'ES' , 'Copybook ficheros' );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 13 , 'ES' , 'Copybook Working'  );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 14 , 'ES' , 'Copybook Linkage'  );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 15 , 'ES' , 'Copybook codigo'   );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 10 , 'es', 'ES' , 'Copy General'      );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 11 , 'es', 'ES' , 'Copybook ficheros' );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 13 , 'es', 'ES' , 'Copybook Working'  );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 14 , 'es', 'ES' , 'Copybook Linkage'  );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 15 , 'es', 'ES' , 'Copybook codigo'   );
 
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 20 , 'ES' , 'Modulo'            );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 21 , 'ES' , 'Modulo estatico'   );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 22 , 'ES' , 'Modulo dinamico'   );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  2 , 23 , 'ES' , 'Variable'          );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 20 , 'es', 'ES' , 'Modulo'            );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 21 , 'es', 'ES' , 'Modulo estatico'   );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 22 , 'es', 'ES' , 'Modulo dinamico'   );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  2 , 23 , 'es', 'ES' , 'Variable'          );
 
 
 -- Agrupacion de los parametros de configuracion (Grupo 3)
 
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  0 , 'XX' , 'General'           );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  1 , 'XX' , 'Messaging'         );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  2 , 'XX' , 'Parser'            );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  3 , 'XX' , 'Web'               );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  4 , 'XX' , 'Databaes'          );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  5 , 'XX' , 'System'            );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  0 , 'xx', 'XX' , 'General'           );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  1 , 'xx', 'XX' , 'Messaging'         );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  2 , 'xx', 'XX' , 'Parser'            );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  3 , 'xx', 'XX' , 'Web'               );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  4 , 'xx', 'XX' , 'Databases'         );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  5 , 'xx', 'XX' , 'System'            );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 , 99 , 'xx', 'XX' , 'Configuration'     );
 
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  0 , 'ES' , 'General'           );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  1 , 'ES' , 'Mensajeria'        );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  2 , 'ES' , 'Parser'            );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  3 , 'ES' , 'Web'               );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  4 , 'ES' , 'Base de datos'     );
-INSERT INTO CFG_CODIGOS (grupo , codigo , lang , valor) VALUES (  3 ,  5 , 'ES' , 'Sistema'           );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  0 , 'es', 'ES' , 'General'           );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  1 , 'es', 'ES' , 'Mensajeria'        );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  2 , 'es', 'ES' , 'Parser'            );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  3 , 'es', 'ES' , 'Web'               );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  4 , 'es', 'ES' , 'Base de datos'     );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 ,  5 , 'es', 'ES' , 'Sistema'           );
+INSERT INTO CFG_CODES (grp , code , idLang , idDialect, data) VALUES (  3 , 99 , 'es', 'ES' , 'Configuracion'     );

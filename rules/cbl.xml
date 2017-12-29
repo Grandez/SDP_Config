@@ -1,0 +1,12 @@
+﻿<RULES>
+	 <group name="TST>
+		  <active>true</active>
+		  <description>
+			   <value lang="xx">Directivas de compilacion</value>
+      </description>	
+		
+		  <item name = "TST">
+			   <key>CBL</key>
+		  </item>
+	 </group>	
+</RULES>

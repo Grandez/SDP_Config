@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:RULES xmlns:r="http://www.sdp.com/SDPRULES" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="htpr://www.sdp.com/SDPRULES SDPRULES.xsd ">
+         
+  <r:header>
+    <title>title</title>
+    <replace>false</replace>
+    <comment>comment</comment>
+  </r:header>
+  <r:group>
+    <parent>0</parent>
+    <id>0</id>
+    <prefix>prefix</prefix>
+    <r:description>
+      <id>0</id>
+      <r:value dialect="XX" lang="xx">r:value</r:value>
+    </r:description>
+    <r:item>
+      <group>0</group>
+      <active>true</active>
+      <key>key</key>
+      <r:description>
+        <id>0</id>
+        <r:value dialect="XX" lang="xx">r:value</r:value>
+      </r:description>
+      <r:rule>
+        <idGroup>0</idGroup>
+        <idItem>0</idItem>
+        <id>0</id>
+        <active>true</active>
+        <key>key</key>
+        <priority>0</priority>
+        <severity>0</severity>
+        <type>0</type>
+        <comparator>0</comparator>
+        <value>0</value>
+        <r:description>
+          <r:value dialect="XX" lang="xx">r:value</r:value>
+        </r:description>
+      </r:rule>
+    </r:item>
+  </r:group>
+  <r:item>
+    <group>0</group>
+    <active>true</active>
+    <key>key</key>
+    <r:description>
+      <id>0</id>
+      <r:value dialect="XX" lang="xx">r:value</r:value>
+    </r:description>
+    <r:rule>
+      <idGroup>0</idGroup>
+      <idItem>0</idItem>
+      <id>0</id>
+      <active>true</active>
+      <key>key</key>
+      <priority>0</priority>
+      <severity>0</severity>
+      <type>0</type>
+      <comparator>0</comparator>
+      <value>0</value>
+      <r:description>
+        <id>0</id>
+        <r:value dialect="XX" lang="xx">r:value</r:value>
+      </r:description>
+    </r:rule>
+  </r:item>
+</r:RULES>

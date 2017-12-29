@@ -9,5 +9,14 @@
 :
 
 @echo off
-D:\Servers\SGDB\Maria\bin\mysql -u SDP --password="sdp" < p:\SDP\Config\rules_all.sql
-D:\Servers\SGDB\Maria\bin\mysql -u SDP --password="sdp" < p:\SDP\Config\rules_1.sql 
+: D:\Servers\SGDB\Maria\bin\mysql -u SDP --password="sdp" < p:\SDP\Config\rules_all.sql
+: D:\Servers\SGDB\Maria\bin\mysql -u SDP --password="sdp" < p:\SDP\Config\rules_1.sql 
+D:\Servers\SGDB\Maria\bin\mysql -u SDP --password="sdp" < p:\SDP\Config\test1.sql 
+
+GOTO END
+
+:JAVA
+
+UNa cosa
+
+:END

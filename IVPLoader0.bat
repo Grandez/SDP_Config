@@ -9,5 +9,6 @@
 :
 
 @echo off
-D:\Servers\SGDB\Maria\bin\mysql -u SDP --password="sdp" < p:\SDP\Config\config0.sql
- 
+:D:\Servers\SGDB\Maria\bin\mysql -u SDP --password="sdp" < p:\SDP\Config\config0.sql
+:D:\Servers\SGDB\Maria\bin\mysql -u SDP --password="sdp" < p:\SDP\Config\rules_all.sql
+D:\Servers\SGDB\Maria\bin\mysql -u SDP --password="sdp" < p:\SDP\Config\test0.sql 

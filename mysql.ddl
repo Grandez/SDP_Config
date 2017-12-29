@@ -21,14 +21,22 @@ SET FOREIGN_KEY_CHECKS = 0 ;
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
 
+DROP   TABLE IF EXISTS ATEST;
+CREATE TABLE ATEST  (
+    clave    VARCHAR  (127) NOT NULL
+   ,tms      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
+
+);
+ALTER TABLE ATEST ADD PRIMARY KEY ( clave );
+
 -- -------------------------------------------------------------------
 -- Tabla de configuracion de sistema
 -- Cuando no hay acceso a la base de datos se corresponde con el
 -- fichero de propiedades
 -- -------------------------------------------------------------------
  
-DROP   TABLE IF EXISTS CFG_CONFIGURACION;
-CREATE TABLE CFG_CONFIGURACION  (
+DROP   TABLE IF EXISTS CFG_CONFIGURATION;
+CREATE TABLE CFG_CONFIGURATION  (
     clave    VARCHAR  (127) NOT NULL
    ,valor    VARCHAR  (255) NOT NULL 
    ,grupo    INTEGER        NOT NULL
@@ -36,13 +44,33 @@ CREATE TABLE CFG_CONFIGURACION  (
    ,mask     VARCHAR  (127) 
    ,minimo   VARCHAR   (32)
    ,maximo   VARCHAR   (32)
-   ,tooltip  INTEGER        NOT NULL
-   ,uid      VARCHAR(32)    DEFAULT 'SYSTEM'
+   ,tooltip  INTEGER   
+   ,uid      VARCHAR   (32)    DEFAULT 'SYSTEM'
    ,tms      TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
 
 );
 
-ALTER TABLE CFG_CONFIGURACION ADD PRIMARY KEY ( clave );
+ALTER TABLE CFG_CONFIGURATION ADD PRIMARY KEY ( clave );
+
+DROP TABLE IF EXISTS CFG_TOOLTIP ;
+CREATE TABLE CFG_TOOLTIP (
+    clave      VARCHAR(127)     NOT NULL
+   ,idLang     CHAR(2)          NOT NULL  -- Codigo del idioma
+   ,idDialect  CHAR(2)          NOT NULL  -- Codigo del dialecto
+   ,tooltip    VARCHAR(255)     NOT NULL  -- Texto
+);
+
+ALTER TABLE CFG_TOOLTIP ADD PRIMARY KEY ( clave, idLang, idDialect);
+
+DROP TABLE IF EXISTS CFG_DESCRIPTION ;
+CREATE TABLE CFG_DESCRIPTION (
+    clave      VARCHAR(127)     NOT NULL
+   ,idLang     CHAR(2)          NOT NULL  -- Codigo del idioma
+   ,idDialect  CHAR(2)          NOT NULL  -- Codigo del dialecto
+   ,data       VARCHAR(255)     NOT NULL  -- Texto
+);
+
+ALTER TABLE CFG_DESCRIPTION ADD PRIMARY KEY ( clave, idLang, idDialect);
 
 -- -------------------------------------------------------------------
 -- Tablas de codigos
@@ -50,15 +78,16 @@ ALTER TABLE CFG_CONFIGURACION ADD PRIMARY KEY ( clave );
 -- localizadas para cada idioma disponible
 -- -------------------------------------------------------------------
 
-DROP TABLE IF EXISTS CFG_CODIGOS ;
-CREATE TABLE CFG_CODIGOS (
-    grupo        INTEGER     NOT NULL  -- Grupo de codigos  
-   ,codigo       INTEGER     NOT NULL  -- Identificador
-   ,lang         VARCHAR(02) NOT NULL  -- Codigo de idioma
-   ,valor        VARCHAR(64) NOT NULL  -- Descripcion     
+DROP TABLE IF EXISTS CFG_CODES ;
+CREATE TABLE CFG_CODES (
+    grp        INTEGER      NOT NULL  -- Grupo de codigos  
+   ,code       INTEGER      NOT NULL  -- Identificador
+   ,idLang     CHAR(2)      NOT NULL  -- Codigo del idioma
+   ,idDialect  CHAR(2)      NOT NULL  -- Codigo del dialecto
+   ,data       VARCHAR(255) NOT NULL  -- Texto
 );
 
-ALTER TABLE CFG_CODIGOS ADD PRIMARY KEY ( grupo , codigo , lang);
+ALTER TABLE CFG_CODES ADD PRIMARY KEY ( grp , code , idLang, idDialect);
 
 -- -------------------------------------------------------------------
 -- Tabla de descripciones de codigos numericos
@@ -79,14 +108,15 @@ ALTER TABLE CFG_TRANSLATE ADD PRIMARY KEY ( idField , idValue, lang );
 -- Tabla de formulas
 -- -------------------------------------------------------------------
 
-DROP TABLE IF EXISTS CFG_FORMULAS ;
-CREATE TABLE CFG_FORMULAS (
+DROP TABLE IF EXISTS SDP_FORMULAS ;
+CREATE TABLE SDP_FORMULAS (
     idFormula    INTEGER          NOT NULL  -- Identificador de la formula
+   ,idType       INTEGER          NOT NULL  -- 0 - Funcion / 1 - Formula
    ,idSeq        INTEGER          NOT NULL  -- Secuencia, cada una es un OR
-   ,formula      VARCHAR(255)     NOT NULL  -- Formula en textto
+   ,formula      VARCHAR(512)     NOT NULL  -- Formula en textto
 );
 
-ALTER TABLE CFG_FORMULAS ADD PRIMARY KEY ( idFormula , idSeq );
+ALTER TABLE SDP_FORMULAS ADD PRIMARY KEY ( idFormula , idType, idSeq );
 
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
@@ -94,6 +124,26 @@ ALTER TABLE CFG_FORMULAS ADD PRIMARY KEY ( idFormula , idSeq );
 -- PREFIJO: SDP
 -- -------------------------------------------------------------------
 -- -------------------------------------------------------------------
+
+-- ----------------------------------------------------------
+-- Cambios para el Batch
+-- ----------------------------------------------------------
+
+DROP   TABLE IF EXISTS SDP_PENDING CASCADE  ;
+CREATE TABLE SDP_PENDING (
+    id           BIGINT UNSIGNED        NOT NULL AUTO_INCREMENT -- Secuencia
+   ,idAppl       BIGINT UNSIGNED        NOT NULL 
+   ,idType       INTEGER                NOT NULL
+   ,oldValue     VARCHAR         (512)  
+   ,newValue     VARCHAR         (512)  
+   ,status       INTEGER                NOT NULL
+   ,uid          VARCHAR          (32)  NOT NULL
+   ,tmsBeg       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
+   ,tmsEnd       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
+);
+
+ALTER TABLE SDP_PENDING ADD PRIMARY KEY   ( id );
+ALTER TABLE SDP_PENDING ADD         INDEX ( idAppl );
 
 -- ----------------------------------------------------------
 -- Areas y aplicaciones
@@ -126,18 +176,23 @@ CREATE TABLE SDP_REL_APP_MOD (
    ,uid          VARCHAR          (32) NOT NULL  -- uid     que ha generado la regla
 );
 
-ALTER TABLE SDP_REL_APP_MOD ADD PRIMARY KEY ( idAppl , mask );
+ALTER TABLE SDP_REL_APP_MOD ADD PRIMARY KEY ( mask );
 
 -- ----------------------------------------------------------
 -- Un archivo puede tener varios modulos
 -- Asumimos que son de la misma aplicacion
 -- ----------------------------------------------------------
 
+-- Revisar indices
+-- Deberia ser nombre/tipo
+
 DROP   TABLE IF EXISTS SDP_FILES CASCADE ;
 CREATE TABLE SDP_FILES (
     idFile       BIGINT UNSIGNED NOT NULL  -- Id del archivo
+   ,idVersion    BIGINT UNSIGNED NOT NULL  -- Id del archivo    
    ,archivo      VARCHAR(255)    NOT NULL  -- Nombre del archivo
-   ,tipo         INTEGER         NOT NULL  -- Tipo de archivo (0 - Codigo, 1 - COPY, 2 - INCLUDE)
+   ,fullName     VARCHAR(255)    NOT NULL  -- Path completo
+   ,tipo         INTEGER         NOT NULL  -- Tipo de archivo (1 - Codigo, 2 - COPY, 3 - INCLUDE)
    ,firma        VARCHAR(64)     NOT NULL  -- firma digital del archivo   
    ,numModulos   INTEGER         NOT NULL  -- Numero de modulos
    ,estado       INTEGER         NOT NULL  -- Estado del analisis
@@ -145,8 +200,8 @@ CREATE TABLE SDP_FILES (
    ,tms          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
 );
 
-ALTER TABLE SDP_FILES   ADD PRIMARY KEY   ( idFile );
-ALTER TABLE SDP_FILES   ADD UNIQUE  KEY   ( archivo , tipo );
+ALTER TABLE SDP_FILES   ADD PRIMARY  KEY   (idFile,  idVersion );
+ALTER TABLE SDP_FILES   ADD UNIQUE KEY   (archivo, tipo );
 
 -- -------------------------------------------------------------------
 -- Modulo fuente original comprimido
@@ -155,12 +210,14 @@ ALTER TABLE SDP_FILES   ADD UNIQUE  KEY   ( archivo , tipo );
 DROP   TABLE IF EXISTS SDP_SOURCES CASCADE ;
 CREATE TABLE SDP_SOURCES (
     idFile    BIGINT UNSIGNED  NOT NULL  -- Identificador de la version del modulo
+   ,idVersion BIGINT UNSIGNED  NOT NULL  -- Identificador de la version del modulo    
+   ,encoded   VARCHAR(32)      NOT NULL  -- Tipo de codificacion
    ,source    MEDIUMBLOB       NOT NULL  -- Fuente en formato ZIP
 );
 
-ALTER TABLE SDP_SOURCES ADD PRIMARY KEY ( idFile );
-ALTER TABLE SDP_SOURCES ADD FOREIGN KEY ( idFile ) 
-                           REFERENCES SDP_FILES ( idFile )
+ALTER TABLE SDP_SOURCES ADD PRIMARY KEY ( idFile, idVersion );
+ALTER TABLE SDP_SOURCES ADD FOREIGN KEY ( idFile, idVersion ) 
+                           REFERENCES SDP_FILES ( idFile, idVersion )
                            ON DELETE CASCADE ;
 
 -- ----------------------------------------------------------
@@ -173,6 +230,7 @@ CREATE TABLE SDP_MODULOS (
     idAppl       BIGINT UNSIGNED NOT NULL  -- Id de la aplicacion
    ,idModulo     BIGINT UNSIGNED NOT NULL  -- Id unico del modulo
    ,idVersion    BIGINT UNSIGNED NOT NULL  -- Id de la version actual
+   ,idFile       BIGINT UNSIGNED NOT NULL  -- Id del fichero que contiene el modulo
    ,nombre       VARCHAR(32)     NOT NULL  -- Nombre del programa    
    ,tipo         INTEGER         NOT NULL  -- Tipo de modulo      
    ,activo       INTEGER         NOT NULL  -- Activo (1) o Inactivo(0)
@@ -186,6 +244,56 @@ ALTER TABLE SDP_MODULOS ADD         KEY   ( idModulo , tipo );
 ALTER TABLE SDP_MODULOS ADD FOREIGN KEY(idAppl) 
                               REFERENCES SDP_APLICACIONES (idAppl )
                               ON DELETE CASCADE;
+
+-- ----------------------------------------------------------
+-- Estado del modulo
+-- Cada registro es una de las condiciones que se deben cumpli
+-- ----------------------------------------------------------
+
+DROP   TABLE IF EXISTS SDP_STATUS ;
+CREATE TABLE SDP_STATUS (
+    idModulo     BIGINT UNSIGNED NOT NULL  -- Id de la verson del modulo
+   ,idGrupo      INTEGER         NOT NULL  -- Identificador del grupo de condiciones
+   ,idItem       INTEGER         NOT NULL  -- Identificador de la condicion
+   ,actual       INTEGER         NOT NULL  -- Valor actual
+   ,maximo       INTEGER         NOT NULL  -- Valor maximo permitido
+   ,excepcion    INTEGER         NOT NULL  -- Exceptuado o no
+   ,progreso     INTEGER         NOT NULL  -- Porcentaje de cumplimiento
+   ,delta        INTEGER         NOT NULL  -- Porcentaje de incremento
+   ,status       INTEGER         NOT NULL  -- 0 - OK / 1 - BAD / -1 Excepcion
+);
+
+ALTER TABLE SDP_STATUS ADD PRIMARY KEY ( idModulo, idGrupo, idItem );
+ALTER TABLE SDP_STATUS ADD FOREIGN KEY ( idModulo ) 
+                           REFERENCES SDP_MODULOS ( idModulo )
+                           ON DELETE CASCADE ;
+
+-- ----------------------------------------------------------
+-- Las excepciones son a nivel modulo
+-- ----------------------------------------------------------
+
+-- ----------------------------------------------------------
+-- Excepciones de Issues
+-- Se activan por Web
+-- no se pueden inferir en el analisis estatico
+-- ----------------------------------------------------------
+
+DROP   TABLE IF EXISTS SDP_ISSUES_EXCEP ;
+CREATE TABLE SDP_ISSUES_EXCEP (
+    idModulo     BIGINT UNSIGNED NOT NULL  -- Id de la verson del modulo
+   ,idGroup      INTEGER         NOT NULL  -- Id del grupo
+   ,idItem       INTEGER         NOT NULL  -- Id del item
+   ,idRule       INTEGER         NOT NULL  -- Id de la regla
+   ,idSeq        INTEGER         NOT NULL  -- Numero de secuencia / 0 - Todos 
+   ,begLine      INTEGER                   -- Inicio de linea   
+   ,bloque       VARCHAR(64)               -- Bloque donde se ha identificado
+   ,firma        VARCHAR(64)               -- firma digital del objeto
+   ,uid          VARCHAR(32)     NOT NULL
+   ,tms          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
+   ,motivo       MEDIUMBLOB      NOT NULL  -- Datos de la excepcion
+);
+
+ALTER TABLE SDP_ISSUES_EXCEP ADD PRIMARY KEY ( idModulo , idGroup, idItem, idRule, idSeq);
 
 -- ----------------------------------------------------------
 -- Dependencias manuales
@@ -204,25 +312,6 @@ CREATE TABLE SDP_DEPENDENCIAS (
 
 ALTER TABLE SDP_DEPENDENCIAS ADD PRIMARY KEY ( modulo , variable, called );
 
--- ----------------------------------------------------------
--- Excepciones de Issues
--- Se activan por Web
--- no se pueden inferir en el analisis estatico
--- ----------------------------------------------------------
-
-DROP   TABLE IF EXISTS SDP_ISSUES_EXCEP ;
-CREATE TABLE SDP_ISSUES_EXCEP (
-    modulo       VARCHAR(64)     NOT NULL  -- Nombre del modulo llamante
-   ,idSeq        INTEGER         NOT NULL  -- Numero de secuencia 
-   ,idIssue      INTEGER         NOT NULL  -- Tipo de issue
-   ,begLine      INTEGER         NOT NULL  -- Inicio de linea   
-   ,bloque       VARCHAR(64)     NOT NULL  -- Bloque donde se ha identificado
-   ,firma        VARCHAR(64)     NOT NULL  -- firma digital
-   ,uid          VARCHAR(32)     NOT NULL
-   ,tms          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
-);
-
-ALTER TABLE SDP_ISSUES_EXCEP ADD PRIMARY KEY ( modulo , idSeq, idIssue, begLine, bloque);
 
 -- ----------------------------------------------------------      
 -- ----------------------------------------------------------
@@ -239,21 +328,21 @@ ALTER TABLE SDP_ISSUES_EXCEP ADD PRIMARY KEY ( modulo , idSeq, idIssue, begLine,
 
 DROP   TABLE IF EXISTS MOD_VERSIONES CASCADE ;
 CREATE TABLE MOD_VERSIONES (
-    idModulo     BIGINT UNSIGNED  NOT NULL  -- Id del modulo
-   ,idVersion    BIGINT UNSIGNED  NOT NULL  -- Id de la version 
-   ,idFile       BIGINT UNSIGNED  NOT NULL  -- Id del archivo
-   ,offsetBeg    INTEGER          NOT NULL  -- Offset de inicio del modulo dentro del archivo
-   ,offsetEnd    INTEGER          NOT NULL  -- Offset de fin del modulo dentro del archivo
-   ,nombre       VARCHAR(32)      NOT NULL  -- Nombre del modulo 
-   ,tipo         INTEGER          NOT NULL  -- Tipo de modulo     
-   ,estado       INTEGER          NOT NULL  --  0 - Sin info /  1 - Completo /  2 - Parcial pero sin dudas
-                                            -- 11 - Ignorado / 99 - Analizado solo CICS 
-   ,missing      INTEGER          NOT NULL  -- Tiene copys no procesadas (0 - No / 1 - Missing / 2 - erroneas)
-   ,arbol        INTEGER          NOT NULL  -- El arbol de llamadas esta completo (1 - Si, 0 - No)
-   ,descripcion  VARCHAR(512)     NOT NULL  -- Posible comentario
-   ,autor        VARCHAR(64)      NOT NULL  -- Autor
-   ,uid          VARCHAR(32)      NOT NULL  -- uid que crea o actualiza   
-   ,tms          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
+    idModulo      BIGINT UNSIGNED  NOT NULL  -- Id del modulo
+   ,idVersion     BIGINT UNSIGNED  NOT NULL  -- Id de la version 
+   ,idVersionFile BIGINT UNSIGNED  NOT NULL  -- Id de la version del archivo
+   ,offsetBeg     INTEGER          NOT NULL  -- Offset de inicio del modulo dentro del archivo
+   ,offsetEnd     INTEGER          NOT NULL  -- Offset de fin del modulo dentro del archivo
+   ,nombre        VARCHAR(32)      NOT NULL  -- Nombre del modulo 
+   ,tipo          INTEGER          NOT NULL  -- Tipo de modulo     
+   ,estado        INTEGER          NOT NULL  --  0 - Sin info /  1 - Completo /  2 - Parcial pero sin dudas
+                                             -- 11 - Ignorado / 99 - Analizado solo CICS 
+   ,missing       INTEGER          NOT NULL  -- Tiene copys no procesadas (0 - No / 1 - Missing / 2 - erroneas)
+   ,arbol         INTEGER          NOT NULL  -- El arbol de llamadas esta completo (1 - Si, 0 - No)
+   ,descripcion   VARCHAR(512)     NOT NULL  -- Posible comentario
+   ,autor         VARCHAR(64)      NOT NULL  -- Autor
+   ,uid           VARCHAR(32)      NOT NULL  -- uid que crea o actualiza   
+   ,tms           TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
 );
 
 ALTER TABLE MOD_VERSIONES ADD PRIMARY KEY ( idVersion );
@@ -469,6 +558,28 @@ ALTER TABLE MOD_CICS ADD FOREIGN KEY ( idVersion )
                             REFERENCES MOD_VERSIONES ( idVersion )
                             ON DELETE CASCADE ;
 
+-- ---------------------------------------------------
+-- Igual que SDP_STATUS
+-- ---------------------------------------------------
+DROP   TABLE IF EXISTS MOD_STATUS ;
+CREATE TABLE MOD_STATUS (
+    idVersion    BIGINT UNSIGNED NOT NULL  -- Id de la verson del modulo
+   ,idGrupo      INTEGER         NOT NULL  -- Identificador del grupo de condiciones
+   ,idItem       INTEGER         NOT NULL  -- Identificador de la condicion en el grupo
+   ,actual       INTEGER         NOT NULL  -- Valor actual
+   ,maximo       INTEGER         NOT NULL  -- Valor maximo permitido
+   ,progreso     INTEGER         NOT NULL  -- Porcentaje de cumplimiento
+   ,delta        INTEGER         NOT NULL  -- Porcentaje de incremento
+   ,excepcion    INTEGER         NOT NULL  -- Exceptuado o no
+   ,status       INTEGER         NOT NULL  -- 0 - OK / 1 - BAD / -1 Excepcion
+);
+
+ALTER TABLE MOD_STATUS ADD PRIMARY KEY ( idVersion , idGrupo, idItem );
+
+ALTER TABLE MOD_STATUS ADD FOREIGN KEY ( idVersion ) 
+                            REFERENCES MOD_VERSIONES ( idVersion )
+                            ON DELETE CASCADE ;
+
 -- ----------------------------------------------------------
 -- Issues
 -- ----------------------------------------------------------
@@ -494,33 +605,6 @@ ALTER TABLE MOD_ISSUES ADD PRIMARY KEY ( idVersion , idSeq);
 ALTER TABLE MOD_ISSUES ADD FOREIGN KEY ( idVersion ) 
                            REFERENCES MOD_VERSIONES ( idVersion )
                            ON DELETE CASCADE ;
-
-DROP   TABLE IF EXISTS MOD_ISSUES_EXCEP ;
-CREATE TABLE MOD_ISSUES_EXCEP (
-    idVersion    BIGINT UNSIGNED NOT NULL  -- Id de la verson del modulo
-   ,idException  BIGINT UNSIGNED NOT NULL  -- Id de la excepcion
-   ,idData       BIGINT UNSIGNED NOT NULL  -- Id de la descripcion de la excepcion
-   ,uid          VARCHAR(32)      NOT NULL  -- uid que crea o actualiza   
-   ,tms          TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP    
-);
-
-ALTER TABLE MOD_ISSUES_EXCEP ADD PRIMARY KEY ( idVersion , idSeq);
-ALTER TABLE MOD_ISSUES_EXCEP ADD FOREIGN KEY ( idVersion ) 
-                                 REFERENCES MOD_VERSIONES ( idVersion )
-                                 ON DELETE CASCADE ;
-
-DROP   TABLE IF EXISTS MOD_ISSUES_EXCEP_DESC ;
-CREATE TABLE MOD_ISSUES_EXCEP_DESC (
-    idVersion    BIGINT UNSIGNED NOT NULL  -- Id de la verson del modulo
-   ,idException  BIGINT UNSIGNED NOT NULL  -- Id de la excepcion
-   ,idData       BIGINT UNSIGNED NOT NULL  -- Id de la descripcion de la excepcion
-   ,data         MEDIUMBLOB      NOT NULL  -- Datos de la excepcion
-);
-
-ALTER TABLE MOD_ISSUES_EXCEP_DESC ADD PRIMARY KEY ( idVersion , idException, idData);
-ALTER TABLE MOD_ISSUES_EXCEP_DESC ADD FOREIGN KEY ( idVersion , idException ) 
-                                  REFERENCES MOD_ISSUES_EXCEP ( idVersion , idException)
-                                  ON DELETE CASCADE ;
 
 -- ----------------------------------------------------------
 -- Sentencias SQL
@@ -1335,6 +1419,31 @@ CREATE TABLE SQL_REGISTERS (
 );
 
 ALTER TABLE SQL_REGISTERS ADD PRIMARY KEY ( name );
+
+
+DROP TABLE IF EXISTS WEB_LABELS ;
+CREATE TABLE WEB_LABELS (
+    idLang       CHAR(2)          NOT NULL  -- Codigo del idioma
+   ,idDialect    CHAR(2)          NOT NULL  -- Codigo del dialecto
+   ,idBlock      INTEGER          NOT NULL  -- Agrupacion de etiquetas
+   ,txtKey       VARCHAR(255)     NOT NULL  -- Texto
+   ,txtValue     VARCHAR(255)     NOT NULL  -- Texto
+);
+
+ALTER TABLE WEB_LABELS ADD PRIMARY KEY ( idLang, idDialect, idBlock, txtKey );
+
+
+DROP TABLE IF EXISTS WEB_MESSAGES ;
+CREATE TABLE WEB_MESSAGES (
+    idLang       CHAR(2)          NOT NULL  -- Codigo del idioma
+   ,idDialect    CHAR(2)          NOT NULL  -- Codigo del dialecto
+   ,idBlock      INTEGER          NOT NULL  -- Agrupacion de reglas
+   ,txtKey       VARCHAR(255)     NOT NULL  -- Texto
+   ,txtValue     VARCHAR(255)     NOT NULL  -- Texto
+);
+
+ALTER TABLE WEB_MESSAGES ADD PRIMARY KEY ( idLang, idDialect, idBlock, txtKey );
+
 
 SET FOREIGN_KEY_CHECKS = 1 ;
 

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--<SDPIVP xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///P:/SDP/config/SDPIVP.xsd"/>-->
+<IVPCONFIG>
+   <block>
+   	  <description>Una descripcion>
+      <workDirectory>p:\SDP\Config</workDirectory>	  	
+   <block>	
+   
+   <sql>Ejecuta una sentencia SQL</sql>
+   <exec>Ejecuta algo en el sistema</exec>
+   <sqlScript>config0.sql</sqlScript>	
+   <sqlScript>rules_all.sql</sqlScript>	
+   <sqlScript>test0.sql</sqlScript>	      	
+</IVPCONFIG>	
